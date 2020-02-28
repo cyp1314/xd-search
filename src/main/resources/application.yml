@@ -27,7 +27,7 @@ logging:
     com.xdclass.search: debug
 
 elasticsearch:
-  host: 34.80.163.115
+  host: 35.229.216.207
   port: 9200
 
 

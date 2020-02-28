@@ -12,6 +12,9 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.springframework.cglib.beans.BeanMap;
@@ -21,6 +24,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NBAPlayerServiceImpl implements NBAPlayerService {
@@ -40,7 +44,9 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
 
     @Override
     public Map<String, Object> getPlayer(String id) throws IOException {
-        GetRequest request = new GetRequest("nba").id(id);
+        GetRequest request = new GetRequest("nba")
+                .id(id);
+
         GetResponse response = client.get(request, RequestOptions.DEFAULT);
         return response.getSource();
     }
@@ -64,6 +70,8 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
     @Override
     public boolean deleteAllPlayer() throws IOException {
         DeleteByQueryRequest request = new DeleteByQueryRequest(NBA_INDEX);
+        request.setQuery(QueryBuilders.matchAllQuery());
+        request.setTimeout(new TimeValue(2, TimeUnit.SECONDS));
         BulkByScrollResponse response = client.deleteByQuery(request,RequestOptions.DEFAULT);
 
         return true;
