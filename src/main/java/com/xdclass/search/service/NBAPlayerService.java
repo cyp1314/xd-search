@@ -15,4 +15,7 @@ public interface NBAPlayerService {
     boolean deletePlayer(String id) throws IOException;
 
     boolean deleteAllPlayer() throws IOException;
+
+    boolean importAll() throws IOException;
+
 }
