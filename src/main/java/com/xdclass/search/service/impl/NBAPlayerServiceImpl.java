@@ -1,5 +1,6 @@
 package com.xdclass.search.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xdclass.search.dao.NBAPlayerDao;
 import com.xdclass.search.model.NBAPlayer;
 import com.xdclass.search.service.NBAPlayerService;
@@ -9,6 +10,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -17,12 +20,15 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +96,26 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
             this.addPlayer(player, String.valueOf(player.getId()));
         }
         return false;
+    }
+
+    @Override
+    public List<NBAPlayer> searchPlayerByName(String fieldName, String name) throws IOException {
+        SearchRequest request = new SearchRequest(NBA_INDEX);
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+        builder.query(QueryBuilders.matchQuery("displayNameEn", name))
+                .from(0)
+                .size(100);
+        request.source(builder);
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+//        System.out.println(JSONObject.toJSON(response));
+
+        SearchHit[] hits = response.getHits().getHits();
+        ArrayList<NBAPlayer> players = new ArrayList<>();
+        for (SearchHit hit : hits) {
+             NBAPlayer player = JSONObject.parseObject(hit.getSourceAsString(), NBAPlayer.class);
+             players.add(player);
+        }
+        return players;
     }
 
     public static <T> Map<String, Object> beanToMap(T bean) {

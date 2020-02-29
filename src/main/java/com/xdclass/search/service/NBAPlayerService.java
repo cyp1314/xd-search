@@ -3,6 +3,7 @@ package com.xdclass.search.service;
 import com.xdclass.search.model.NBAPlayer;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface NBAPlayerService {
@@ -18,4 +19,6 @@ public interface NBAPlayerService {
 
     boolean importAll() throws IOException;
 
+
+    List<NBAPlayer> searchPlayerByName(String fieldName, String name) throws IOException;
 }

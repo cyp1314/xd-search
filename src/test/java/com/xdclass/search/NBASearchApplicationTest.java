@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -69,5 +70,16 @@ public class NBASearchApplicationTest {
         boolean b = playerService.deleteAllPlayer();
         System.out.println(b);
     }
+
+
+    @Test
+    public void searchPlayerByName() throws IOException {
+        List<NBAPlayer> players = playerService.searchPlayerByName("displayNameEn", "james");
+
+        for (NBAPlayer player : players) {
+            System.out.println(player.toString());
+        }
+    }
+
 
 }

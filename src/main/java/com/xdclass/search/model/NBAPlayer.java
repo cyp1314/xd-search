@@ -218,4 +218,35 @@ public class NBAPlayer {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("NBAPlayer{");
+        sb.append("id=").append(id);
+        sb.append(", countryEn='").append(countryEn).append('\'');
+        sb.append(", country='").append(country).append('\'');
+        sb.append(", code='").append(code).append('\'');
+        sb.append(", displayAffiliation='").append(displayAffiliation).append('\'');
+        sb.append(", displayName='").append(displayName).append('\'');
+        sb.append(", draft=").append(draft);
+        sb.append(", schoolType='").append(schoolType).append('\'');
+        sb.append(", weight='").append(weight).append('\'');
+        sb.append(", playYear=").append(playYear);
+        sb.append(", jerseyNo='").append(jerseyNo).append('\'');
+        sb.append(", birthDay=").append(birthDay);
+        sb.append(", birthDayStr='").append(birthDayStr).append('\'');
+        sb.append(", displayNameEn='").append(displayNameEn).append('\'');
+        sb.append(", position='").append(position).append('\'');
+        sb.append(", heightValue=").append(heightValue);
+        sb.append(", playerId='").append(playerId).append('\'');
+        sb.append(", teamCity='").append(teamCity).append('\'');
+        sb.append(", teamCityEn='").append(teamCityEn).append('\'');
+        sb.append(", teamName='").append(teamName).append('\'');
+        sb.append(", teamNameEn='").append(teamNameEn).append('\'');
+        sb.append(", teamConference='").append(teamConference).append('\'');
+        sb.append(", teamConferenceEn='").append(teamConferenceEn).append('\'');
+        sb.append(", age=").append(age);
+        sb.append('}');
+        return sb.toString();
+    }
 }
