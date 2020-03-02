@@ -81,5 +81,26 @@ public class NBASearchApplicationTest {
         }
     }
 
+    @Test
+    public void searchTermByTeamName() throws IOException {
+        List<NBAPlayer> players = playerService.searchTerm("teamName", "勇士");
+//        List<NBAPlayer> players = playerService.searchTerm("country", "美国");
+
+        System.out.println("Player Count : " + players.size() );
+        for (NBAPlayer player : players) {
+            System.out.println(player.toString());
+        }
+    }
+
+    @Test
+    public void searchTermByCountry() throws IOException {
+        List<NBAPlayer> players = playerService.searchTerm("country", "法国");
+
+        System.out.println("Player Count : " + players.size() );
+        for (NBAPlayer player : players) {
+            System.out.println(player.toString());
+        }
+    }
+
 
 }

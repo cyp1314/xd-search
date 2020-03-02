@@ -19,6 +19,7 @@ public interface NBAPlayerService {
 
     boolean importAll() throws IOException;
 
+    List<NBAPlayer> searchPlayerByName(String key, String value) throws IOException;
 
-    List<NBAPlayer> searchPlayerByName(String fieldName, String name) throws IOException;
+    List<NBAPlayer> searchTerm(String key, String value) throws IOException;
 }

@@ -37,7 +37,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class NBAPlayerServiceImpl implements NBAPlayerService {
 
-    public static final String NBA_INDEX = "nba";
+    public static final String NBA_INDEX = "nba_lastest";
+    public static final int START_OFFSET = 0;
+    public static final int MAX_COUNT = 100;
     @Resource
     private RestHighLevelClient client;
 
@@ -46,7 +48,7 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
 
     @Override
     public boolean addPlayer(NBAPlayer player, String id) throws IOException {
-        IndexRequest request = new IndexRequest("nba")
+        IndexRequest request = new IndexRequest(NBA_INDEX)
                 .id(id)
                 .source(beanToMap(player));
         IndexResponse response = client.index(request, RequestOptions.DEFAULT);
@@ -55,7 +57,7 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
 
     @Override
     public Map<String, Object> getPlayer(String id) throws IOException {
-        GetRequest request = new GetRequest("nba")
+        GetRequest request = new GetRequest(NBA_INDEX)
                 .id(id);
 
         GetResponse response = client.get(request, RequestOptions.DEFAULT);
@@ -64,7 +66,7 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
 
     @Override
     public boolean updatePlayer(NBAPlayer player, String id) throws IOException {
-        UpdateRequest request = new UpdateRequest("nba", id)
+        UpdateRequest request = new UpdateRequest(NBA_INDEX, id)
                 .doc(beanToMap(player));
         UpdateResponse update = client.update(request, RequestOptions.DEFAULT);
         return true;
@@ -73,7 +75,7 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
 
     @Override
     public boolean deletePlayer(String id) throws IOException {
-        DeleteRequest request = new DeleteRequest("nba", id);
+        DeleteRequest request = new DeleteRequest(NBA_INDEX, id);
         DeleteResponse delete = client.delete(request, RequestOptions.DEFAULT);
         return true;
     }
@@ -99,21 +101,39 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
     }
 
     @Override
-    public List<NBAPlayer> searchPlayerByName(String fieldName, String name) throws IOException {
+    public List<NBAPlayer> searchPlayerByName(String key, String value) throws IOException {
         SearchRequest request = new SearchRequest(NBA_INDEX);
         SearchSourceBuilder builder = new SearchSourceBuilder();
-        builder.query(QueryBuilders.matchQuery("displayNameEn", name))
-                .from(0)
-                .size(100);
+        builder.query(QueryBuilders.matchQuery(key, value))
+                .from(START_OFFSET)
+                .size(MAX_COUNT);
         request.source(builder);
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
-//        System.out.println(JSONObject.toJSON(response));
 
         SearchHit[] hits = response.getHits().getHits();
         ArrayList<NBAPlayer> players = new ArrayList<>();
         for (SearchHit hit : hits) {
-             NBAPlayer player = JSONObject.parseObject(hit.getSourceAsString(), NBAPlayer.class);
-             players.add(player);
+            NBAPlayer player = JSONObject.parseObject(hit.getSourceAsString(), NBAPlayer.class);
+            players.add(player);
+        }
+        return players;
+    }
+
+    @Override
+    public List<NBAPlayer> searchTerm(String key, String value) throws IOException {
+        SearchRequest request = new SearchRequest(NBA_INDEX);
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+        builder.query(QueryBuilders.termQuery(key, value))
+                .from(START_OFFSET)
+                .size(MAX_COUNT);
+        request.source(builder);
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+        SearchHit[] hits = response.getHits().getHits();
+        ArrayList<NBAPlayer> players = new ArrayList<>();
+        for (SearchHit hit : hits) {
+            NBAPlayer player = JSONObject.parseObject(hit.getSourceAsString(), NBAPlayer.class);
+            players.add(player);
         }
         return players;
     }
