@@ -22,4 +22,6 @@ public interface NBAPlayerService {
     List<NBAPlayer> searchPlayerByName(String key, String value) throws IOException;
 
     List<NBAPlayer> searchTerm(String key, String value) throws IOException;
+
+    List<NBAPlayer> searchMatchPrefix(String key, String value) throws IOException;
 }

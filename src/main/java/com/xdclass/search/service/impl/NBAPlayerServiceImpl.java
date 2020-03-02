@@ -138,6 +138,25 @@ public class NBAPlayerServiceImpl implements NBAPlayerService {
         return players;
     }
 
+    @Override
+    public List<NBAPlayer> searchMatchPrefix(String key, String value) throws IOException {
+        SearchRequest request = new SearchRequest(NBA_INDEX);
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+        builder.query(QueryBuilders.prefixQuery(key, value))
+                .from(START_OFFSET)
+                .size(MAX_COUNT);
+        request.source(builder);
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+        SearchHit[] hits = response.getHits().getHits();
+        ArrayList<NBAPlayer> players = new ArrayList<>();
+        for (SearchHit hit : hits) {
+            NBAPlayer player = JSONObject.parseObject(hit.getSourceAsString(), NBAPlayer.class);
+            players.add(player);
+        }
+        return players;
+    }
+
     public static <T> Map<String, Object> beanToMap(T bean) {
         Map<String, Object> map = new HashMap<>();
         if (bean != null) {

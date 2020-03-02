@@ -45,17 +45,28 @@ public class NBASearchController {
     @RequestMapping("/searchTerm")
     public List<NBAPlayer> searchTerm(
             @RequestParam(name = "country", required = false) String country,
-            @RequestParam(name = "teamName", required = false) String teamName
-
-    ) {
+            @RequestParam(name = "teamName", required = false) String teamName) {
         List<NBAPlayer> players = null;
         try {
             if (StringUtils.isNotBlank(country)) {
-                players = playerService.searchPlayerByName("country", country);
+                players = playerService.searchTerm("country", country);
             } else if (StringUtils.isNotBlank(teamName)) {
-                players = playerService.searchPlayerByName("teamName", teamName);
+                players = playerService.searchTerm("teamName", teamName);
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+
+    @RequestMapping("/searchMatchPrefix")
+    public List<NBAPlayer> searchMatchPrefix(
+            @RequestParam(name = "displayNameEn", required = false) String displayNameEn) {
+        List<NBAPlayer> players = null;
+        try {
+            players = playerService.searchMatchPrefix("displayNameEn", displayNameEn);
         } catch (IOException e) {
             e.printStackTrace();
         }
